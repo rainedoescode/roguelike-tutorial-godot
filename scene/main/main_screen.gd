@@ -40,7 +40,7 @@ func _create_pc() -> void:
 		new_pc.position = _get_position_from_coord(new_position)
 		new_pc.modulate = PALETTE[i]
 		add_child(new_pc)
-		#print(_get_coord_from_sprite(new_pc))
+		# print(_get_coord_from_sprite(new_pc))
 		new_position.x += 1
 
 
