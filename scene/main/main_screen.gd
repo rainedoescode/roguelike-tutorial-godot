@@ -33,14 +33,15 @@ func _create_pc() -> void:
 	# var pc: Sprite2D = preload("res://sprite/pc.tscn").instantiate()
 	var pc: PackedScene = preload("res://sprite/pc.tscn")
 	var new_pc: Sprite2D
-	var x: int = 0
+	var new_position: Vector2i = Vector2i(0, 0)
 	
 	for i: StringName in PALETTE.keys():
 		new_pc = pc.instantiate()
-		new_pc.position = Vector2i(50 + x, 50)
+		new_pc.position = _get_position_from_coord(new_position)
 		new_pc.modulate = PALETTE[i]
 		add_child(new_pc)
-		x += 30
+		#print(_get_coord_from_sprite(new_pc))
+		new_position.x += 1
 
 
 func _get_position_from_coord(coord: Vector2i, offset: Vector2i = Vector2i(0, 0)) -> Vector2i:
@@ -51,5 +52,5 @@ func _get_position_from_coord(coord: Vector2i, offset: Vector2i = Vector2i(0, 0)
 
 func _get_coord_from_sprite(sprite: Sprite2D) -> Vector2i:
 	var new_x: int = floor((sprite.position.x - START_X) / STEP_X)
-	var new_y: int = floor((sprite.position.y = START_Y) / STEP_Y)
+	var new_y: int = floor((sprite.position.y - START_Y) / STEP_Y)
 	return Vector2i(new_x, new_y)
