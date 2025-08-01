@@ -1,4 +1,4 @@
-class_name SpriteFactory
+# class_name SpriteFactory
 extends Node2D
 
 
