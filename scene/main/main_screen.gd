@@ -36,7 +36,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _move_pc(direction: StringName) -> void:
-	var pc: Sprite2D = get_tree().get_first_node_in_group(PC_TAG)
+	var pc: Sprite2D = get_tree().get_first_node_in_group(SubTag.PC)
 	var coord: Vector2i = ConvertCoord.get_coord(pc)
 	
 	match direction:
@@ -49,7 +49,7 @@ func _move_pc(direction: StringName) -> void:
 		MOVE_DOWN:
 			coord += Vector2i.DOWN
 	
-	pc.position = ConvertCoord.get_
+	pc.position = ConvertCoord.get_position(coord)
 
 
 func _connect_signals(signal_connections: Dictionary) -> void:
