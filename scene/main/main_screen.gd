@@ -1,12 +1,6 @@
 extends Node2D
 
 
-# Grid coordinate setup
-const START_X: int = 50
-const START_Y: int = 54
-const STEP_X: int = 26
-const STEP_Y: int = 34
-
 const PC_TAG: StringName = &"pc"
 
 const MOVE_LEFT: StringName = &"move_left"
@@ -28,14 +22,9 @@ func _ready() -> void:
 
 
 func _create_pc() -> void:
-	# var pc: Sprite2D = preload("res://sprite/pc.tscn").instantiate()
-	var new_pc: Sprite2D = preload("res://sprite/pc.tscn").instantiate()
-	var new_position: Vector2i = Vector2i(0, 0)
 	
-	new_pc.position = _get_position_from_coord(new_position)
-	new_pc.modulate = Palette.get_color({}, MainTag.ACTOR, true)
-	new_pc.add_to_group(PC_TAG)
-	add_child(new_pc)
+	SpriteFactory.create_actor(SubTag.PC, Vector2i(0, 0), true)
+	
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -48,7 +37,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _move_pc(direction: StringName) -> void:
 	var pc: Sprite2D = get_tree().get_first_node_in_group(PC_TAG)
-	var coord: Vector2i = _get_coord_from_sprite(pc)
+	var coord: Vector2i = ConvertCoord.get_coord(pc)
 	
 	match direction:
 		MOVE_LEFT:
@@ -60,16 +49,26 @@ func _move_pc(direction: StringName) -> void:
 		MOVE_DOWN:
 			coord += Vector2i.DOWN
 	
-	pc.position = _get_position_from_coord(coord)
+	pc.position = ConvertCoord.get_
 
 
-func _get_position_from_coord(coord: Vector2i, offset: Vector2i = Vector2i(0, 0)) -> Vector2i:
-	var new_x: int = START_X + STEP_X * coord.x + offset.x
-	var new_y: int = START_Y + STEP_Y * coord.y + offset.y
-	return Vector2i(new_x, new_y)
-
-
-func _get_coord_from_sprite(sprite: Sprite2D) -> Vector2i:
-	var new_x: int = floor((sprite.position.x - START_X) / STEP_X)
-	var new_y: int = floor((sprite.position.y - START_Y) / STEP_Y)
-	return Vector2i(new_x, new_y)
+func _connect_signals(signal_connections: Dictionary) -> void:
+	var signals_from_one_node: Dictionary
+	var target_nodes: Array
+	var source_signal: Signal
+	var target_function: Callable
+	
+	for source_node: String in signal_connections.keys():
+		signals_from_one_node = signal_connections[source_node]
+		
+		for signal_name: String in signals_from_one_node.keys():
+			target_nodes = signals_from_one_node[signal_name]
+			
+			for target_node: String in target_nodes:
+				source_signal = get_node(source_node)[signal_name]
+				
+				target_function = get_node(target_node)["_on_" + \
+					Array(source_node.split("/")).pop_back() + "_" + signal_name]
+				
+				if source_signal.connect(target_function) == ERR_INVALID_PARAMETER:
+					push_error("Signal error: %s -> %s, %s." % [source_node, target_node, signal_name])
