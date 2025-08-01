@@ -17,6 +17,7 @@ const MOVE_INPUTS: Array[StringName] = [
 
 
 func _ready() -> void:
+	_connect_signals(NodeReference.SIGNAL_CONNECTIONS)
 	RenderingServer.set_default_clear_color(Palette.get_color({}, MainTag.BACKGROUND, true))
 	_create_pc()
 
